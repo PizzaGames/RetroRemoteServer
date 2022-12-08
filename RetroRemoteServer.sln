@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetroRemoteServer", "RetroRemoteServer.csproj", "{B02EC7CD-C469-4370-ACA1-AAAA8D1BECA7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B02EC7CD-C469-4370-ACA1-AAAA8D1BECA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B02EC7CD-C469-4370-ACA1-AAAA8D1BECA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B02EC7CD-C469-4370-ACA1-AAAA8D1BECA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B02EC7CD-C469-4370-ACA1-AAAA8D1BECA7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {385168CE-301B-4700-9C20-190B2EF5D0E0}
+	EndGlobalSection
+EndGlobal
