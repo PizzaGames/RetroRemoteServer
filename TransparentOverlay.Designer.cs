@@ -44,6 +44,7 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "to cancel capture, press Ctrl+Alt+F10";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // TransparentOverlay
             // 
@@ -59,7 +60,8 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "TransparentOverlay";
-            this.TopMost = true;
+            this.Activated += new System.EventHandler(this.TransparentOverlay_Activated);
+            this.Deactivate += new System.EventHandler(this.TransparentOverlay_Deactivate);
             this.ResumeLayout(false);
 
         }

@@ -2,7 +2,7 @@ using System;
 using System.Windows.Forms;
 using Timer = System.Windows.Forms.Timer;
 
-namespace Gma.UserActivityMonitor {
+namespace Gma.HookManager {
 
     /// <summary>
     /// This class monitors all mouse activities globally (also outside of the application) 

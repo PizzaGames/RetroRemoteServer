@@ -1,4 +1,4 @@
-using Gma.UserActivityMonitor;
+using Gma.HookManager;
 using Microsoft.VisualBasic.Devices;
 using System.Net;
 using System.Net.Sockets;
@@ -16,20 +16,29 @@ namespace RetroRemoteServer
         private bool capturing = false;
         private Size MonitorSize;
         private TransparentOverlay TransparentOverlay;
+        private Point lastCursorPos = new Point();
 
-        Socket? socket = null;
+        private ServerSocket? server = null;
+
+        private bool ServerStarted = false;
+
+        [DllImport("User32.Dll")]
+        public static extern long SetCursorPos(int x, int y);
+
+        [DllImport("User32.Dll")]
+        public static extern long GetCursorPos(ref Point pos);
 
         public RetroRemoteForm()
         {
             InitializeComponent();
 
-            //HookManager.MouseDown += MouseDownHandler;
-            //HookManager.MouseMoveExt += MouseMoveExHandler;
+            HookManager.MouseDown += MouseDownHandler;
+            HookManager.MouseMoveExt += MouseMoveExHandler;
             HookManager.MouseUp += MouseUpHandler;
             HookManager.KeyDown += KeyDownHandler;
             HookManager.KeyUp += KeyUpHandler;
-            //HookManager.MouseClickExt += MouseClickExtHandler;
-            //HookManager.MouseWheel += MouseWheelHandler;
+            HookManager.MouseClickExt += MouseClickExtHandler;
+            HookManager.MouseWheel += MouseWheelHandler;
 
             MonitorSize = System.Windows.Forms.SystemInformation.PrimaryMonitorSize;
 
@@ -38,67 +47,11 @@ namespace RetroRemoteServer
 
         }
 
-        private void MouseWheelHandler(object? sender, MouseEventArgs e)
-        {
-            if (!capturing) return;
-
-            Println($"MW;b:{e.Delta}");
-        }
-
-        private void MouseClickExtHandler(object? sender, MouseEventExtArgs e)
-        {
-            if (!capturing) return;
-
-            //Println($"MC;b:{e.Button};");
-            e.Handled = true;
-        }
-
-        private void MouseUpHandler(object? sender, MouseEventArgs e)
-        {
-            if (!capturing) return;
-
-            Println($"MU;b:{e.Button};");
-        }
-
-        private void MouseMoveExHandler(object? sender, MouseEventExtArgs e)
-        {
-            if (!capturing) return;
-
-            Println($"MM;x:{e.X};y:{e.Y};w:{MonitorSize.Width};h:{MonitorSize.Height};");
-        }
-
-        private void MouseDownHandler(object? sender, MouseEventArgs e)
-        {
-            if (!capturing) return;
-
-            Println($"MD;b:{e.Button};");
-        }
-
-        private void KeyUpHandler(object? sender, KeyEventArgs e)
-        {
-            if (!capturing) return;
-
-
-            Println($"KU;c:{e.KeyCode};v:{e.KeyValue};");
-
-            if (controlPressed && e.KeyCode == Keys.LControlKey)
-            {
-                controlPressed = false;
-            }
-            if (altPressed && e.KeyCode == Keys.LMenu)
-            {
-                altPressed = false;
-            }
-
-            e.Handled = true;
-
-        }
-
         private void KeyDownHandler(object? sender, KeyEventArgs e)
         {
             if (!capturing) return;
 
-            Println($"KD;c:{e.KeyCode};v:{e.KeyValue};");
+            SendEventMsg($"a:1,k:{e.KeyValue}");
             if (!controlPressed && e.KeyCode == Keys.LControlKey)
             {
                 controlPressed = true;
@@ -118,32 +71,105 @@ namespace RetroRemoteServer
             e.Handled = true;
 
         }
+        private void KeyUpHandler(object? sender, KeyEventArgs e)
+        {
+            if (!capturing) return;
+
+
+            SendEventMsg($"a:2,k:{e.KeyValue}");
+
+            if (controlPressed && e.KeyCode == Keys.LControlKey)
+            {
+                controlPressed = false;
+            }
+            if (altPressed && e.KeyCode == Keys.LMenu)
+            {
+                altPressed = false;
+            }
+
+            e.Handled = true;
+
+        }
+        private void MouseClickExtHandler(object? sender, MouseEventExtArgs e)
+        {
+            if (!capturing) return;
+            //SendEventMsg($"a:7,b:{GetButton(e)};");
+            e.Handled = true;
+        }
+
+
+        private void MouseMoveExHandler(object? sender, MouseEventExtArgs e)
+        {
+            if (!capturing) return;
+
+            SendEventMsg($"a:3,x:{e.X},y:{e.Y}");
+
+            SetCursorPos(0, 0);
+
+            e.Handled = true;
+        }
+
+        
+        private void MouseDownHandler(object? sender, MouseEventArgs e)
+        {
+            if (!capturing) return;
+
+            SendEventMsg($"a:4,b:{GetButton(e)}");
+        }
+        
+
+        private static int GetButton(MouseEventArgs e)
+        {
+            switch (e.Button)
+            {
+                case MouseButtons.Left: return 1;
+                case MouseButtons.Right: return 2;
+                case MouseButtons.Middle: return 3;
+                default: return -1;
+            }
+        }
+
+        
+        private void MouseUpHandler(object? sender, MouseEventArgs e)
+        {
+            if (!capturing) return;
+
+            SendEventMsg($"a:5,b:{GetButton(e)}");
+        }
+        
+
+        private void MouseWheelHandler(object? sender, MouseEventArgs e)
+        {
+            if (!capturing) return;
+            SendEventMsg($"a:6,d:{e.Delta}");
+        }
+
 
         private void btCapture_Click(object sender, EventArgs e)
         {
             InitializeCapture();
         }
 
+        private void btCancelCapture_Click(object sender, EventArgs e)
+        {
+            StopCapture();
+        }
+        private void SendEventMsg(String message)
+        {
+            string retroEvent = "{" + message + "}";
+            AppendConsoleText(retroEvent);
+
+            if (server == null) return;
+            server.SendMessage(retroEvent);
+        }
         private void InitializeCapture()
         {
-            //Println("Initializing capture...");
-
-            //IPHostEntry host = Dns.GetHostEntry("127.0.0.1");
-            //IPAddress ipAddress = host.AddressList[0];
-            //IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 9999);
-
-            //Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            //listener.Bind(localEndPoint);
-            //listener.Listen(10);
-            //socket = listener.Accept();
-
-
+            AppendConsoleText("Initializing capture...");
+            AppendConsoleText("To  cancel capture, press Ctrl+Alt+F10");
             btCapture.Enabled = false;
             btCapture.Text = "Capturing";
 
             capturing = true;
-
-            Cursor.Hide();
 
             toolStripStatus.Text = "Press Ctrl+Alt+F10 to stop...";
 
@@ -153,12 +179,11 @@ namespace RetroRemoteServer
             TransparentOverlay.Location = new Point(0, 0);
             */
 
+            GetCursorPos(ref lastCursorPos);
         }
-
-
         private void StopCapture()
         {
-            Println("Capture cancelled.");
+            AppendConsoleText("Capture cancelled.");
 
             btCapture.Text = "Capture Inputs...";
             btCapture.Enabled = true;
@@ -166,29 +191,71 @@ namespace RetroRemoteServer
 
             capturing = false;
 
-            Cursor.Show();
-
             /*
             TransparentOverlay.Hide();
             */
 
+            SetCursorPos(lastCursorPos.X, lastCursorPos.Y);
+        }
+        private void AppendConsoleText(String text) {
+            txtConsole.AppendText($"{text}{Environment.NewLine}");
+
         }
 
-
-        private void Println(String message)
+        private void btStartServer_Click(object sender, EventArgs e)
         {
-            string text = "{" + message + "}" + Environment.NewLine;
-            //if (socket != null)
-            //{
-            //    socket.Send(Encoding.ASCII.GetBytes(text));
-            //}
-
-            txtConsole.AppendText(text);
+            SwitchServer();
         }
 
-        private void btCancelCapture_Click(object sender, EventArgs e)
+        
+
+        private void SwitchServer()
         {
-            StopCapture();
+            if (!ServerStarted)
+            {
+                StartServer();
+            } else
+            {
+                StopServer();
+            }
+            
+        }
+
+        private void StartServer()
+        {
+            AppendConsoleText("Initializing server.");
+            AppendConsoleText("Waiting for connection.");
+
+            server = new ServerSocket(txtIP.Text, Int32.Parse(txtPort.Text));
+            server.Accept();
+            
+
+            btCapture.Enabled = true;
+
+            AppendConsoleText("To start input capture, click on capture inputs button.");
+            btStartServer.Text = "Stop server";
+
+            ServerStarted = true;
+        }
+
+        private void StopServer()
+        {
+            AppendConsoleText("Stopping server.");
+
+            if (capturing)
+            {
+                GetCursorPos(ref lastCursorPos);
+                StopCapture();
+            }
+
+            btCapture.Enabled = false;
+            btStartServer.Text = "Start server";
+
+            ServerStarted = false;
+
+            if (server == null) return;
+            server.Close();
+
         }
     }
 }

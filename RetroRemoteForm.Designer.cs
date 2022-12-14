@@ -32,11 +32,18 @@
             this.txtConsole = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.btStartServer = new System.Windows.Forms.Button();
+            this.lbAddress = new System.Windows.Forms.Label();
+            this.txtIP = new System.Windows.Forms.TextBox();
+            this.lbPort = new System.Windows.Forms.Label();
+            this.txtPort = new System.Windows.Forms.TextBox();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btCapture
             // 
+            this.btCapture.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btCapture.Enabled = false;
             this.btCapture.Location = new System.Drawing.Point(725, 397);
             this.btCapture.Name = "btCapture";
             this.btCapture.Size = new System.Drawing.Size(145, 23);
@@ -47,6 +54,9 @@
             // 
             // txtConsole
             // 
+            this.txtConsole.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtConsole.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.txtConsole.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.txtConsole.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
@@ -75,11 +85,60 @@
             this.toolStripStatus.Size = new System.Drawing.Size(48, 17);
             this.toolStripStatus.Text = "Ready...";
             // 
+            // btStartServer
+            // 
+            this.btStartServer.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btStartServer.Location = new System.Drawing.Point(582, 397);
+            this.btStartServer.Name = "btStartServer";
+            this.btStartServer.Size = new System.Drawing.Size(137, 23);
+            this.btStartServer.TabIndex = 6;
+            this.btStartServer.Text = "Start Server...";
+            this.btStartServer.UseVisualStyleBackColor = true;
+            this.btStartServer.Click += new System.EventHandler(this.btStartServer_Click);
+            // 
+            // lbAddress
+            // 
+            this.lbAddress.Location = new System.Drawing.Point(12, 401);
+            this.lbAddress.Name = "lbAddress";
+            this.lbAddress.Size = new System.Drawing.Size(57, 15);
+            this.lbAddress.TabIndex = 7;
+            this.lbAddress.Text = "Address:";
+            // 
+            // txtIP
+            // 
+            this.txtIP.Location = new System.Drawing.Point(75, 397);
+            this.txtIP.Name = "txtIP";
+            this.txtIP.Size = new System.Drawing.Size(118, 23);
+            this.txtIP.TabIndex = 8;
+            this.txtIP.Text = "10.0.0.20";
+            // 
+            // lbPort
+            // 
+            this.lbPort.AutoSize = true;
+            this.lbPort.Location = new System.Drawing.Point(199, 400);
+            this.lbPort.Name = "lbPort";
+            this.lbPort.Size = new System.Drawing.Size(32, 15);
+            this.lbPort.TabIndex = 9;
+            this.lbPort.Text = "Port:";
+            // 
+            // txtPort
+            // 
+            this.txtPort.Location = new System.Drawing.Point(237, 397);
+            this.txtPort.Name = "txtPort";
+            this.txtPort.Size = new System.Drawing.Size(69, 23);
+            this.txtPort.TabIndex = 10;
+            this.txtPort.Text = "9999";
+            // 
             // RetroRemoteForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(882, 448);
+            this.Controls.Add(this.txtPort);
+            this.Controls.Add(this.lbPort);
+            this.Controls.Add(this.txtIP);
+            this.Controls.Add(this.lbAddress);
+            this.Controls.Add(this.btStartServer);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.txtConsole);
             this.Controls.Add(this.btCapture);
@@ -98,5 +157,10 @@
         private TextBox txtConsole;
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel toolStripStatus;
+        private Button btStartServer;
+        private Label lbAddress;
+        private TextBox txtIP;
+        private Label lbPort;
+        private TextBox txtPort;
     }
 }

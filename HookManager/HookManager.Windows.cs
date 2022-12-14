@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Gma.UserActivityMonitor
+namespace Gma.HookManager
 {
     public static partial class HookManager
     {

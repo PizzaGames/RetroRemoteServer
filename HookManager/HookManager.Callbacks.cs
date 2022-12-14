@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace Gma.UserActivityMonitor
+namespace Gma.HookManager
 {
     public static partial class HookManager
     {
@@ -99,6 +99,16 @@ namespace Gma.UserActivityMonitor
 
                 switch (wParam)
                 {
+                    case WM_MBUTTONDOWN:
+                        mouseDown = true;
+                        button = MouseButtons.Middle;
+                        clickCount = 1;
+                        break;
+                    case WM_MBUTTONUP:
+                        mouseUp = true;
+                        button = MouseButtons.Middle;
+                        clickCount = 1;
+                        break;
                     case WM_LBUTTONDOWN:
                         mouseDown = true;
                         button = MouseButtons.Left;
